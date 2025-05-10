@@ -32,6 +32,7 @@ def evaluate_lora(args, clip_model, loader, dataset):
     return acc
 
 
+
 def run_lora(args, clip_model, logit_scale, dataset, train_loader, val_loader, test_loader):
     
     VALIDATION = False
@@ -145,7 +146,7 @@ def run_lora(args, clip_model, logit_scale, dataset, train_loader, val_loader, t
     
     if args.save_path != None:
         save_lora(args, list_lora_layers)
-    return
+    return acc_test
             
     
-            
+        
