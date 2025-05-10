@@ -145,7 +145,7 @@ def run_lora(args, clip_model, logit_scale, dataset, train_loader, val_loader, t
     
     if args.save_path != None:
         save_lora(args, list_lora_layers)
-    return
+    return acc_test
             
     
             
