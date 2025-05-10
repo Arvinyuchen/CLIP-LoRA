@@ -1,4 +1,3 @@
-import pandas as pd
 import matplotlib.pyplot as plt
 
 import torch
@@ -50,21 +49,33 @@ def main(shot: int) -> float:
         else:
             train_loader = build_data_loader(data_source=dataset.train_x, batch_size=args.batch_size, tfm=train_tranform, is_train=True, shuffle=True, num_workers=8)
 
-    run_lora(args, clip_model, logit_scale, dataset, train_loader, val_loader, test_loader)
+    acc, zs_acc = run_lora(args, clip_model, logit_scale, dataset, train_loader, val_loader, test_loader)
+    return acc, zs_acc
 
 def run_experiments():
-    shots = [1, 2, 4]
+    shots = [1]
     results = {}
+    zs_acc = None
+    
 
     for shot in shots:
-        acc = main(shot)
-        results[shots] = acc
+        acc, shot_zs_acc = main(shot)
+        if zs_acc is None:
+            zs_acc = shot_zs_acc
+        results[shot] = acc
 
-    plt.plot(list(results.keys()), list(results.values()), marker='o')
-    plt.xlabel("Number of shots")
-    plt.ylabel("Accuracy")
-    plt.title("Few-shot Learning Performance")
-    plt.grid(True)
+
+    # Plotting zero-shot accuracy as star
+    plt.scatter([0], [zs_acc], color='mediumorchid', marker='*', s=200, label='Zero-Shot\nCLIP')
+    plt.text(0, zs_acc - 1.5, "Zero-Shot\nCLIP", color='mediumorchid', ha='center', fontsize=10)
+
+    # Plotting few -shots 
+    plt.plot(list(results.keys()), list(results.values()), color='mediumorchid', marker='o', linestyle=':')
+    plt.xlabel("# of labeled training examples per class", fontsize=12)
+    plt.ylabel("Accuracy (%)", fontsize=12)
+    plt.grid(True, linestyle='--', alpha=0.5)
+    
+    plt.tight_layout()
     plt.show()
 
 
